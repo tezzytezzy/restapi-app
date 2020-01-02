@@ -1,0 +1,7 @@
+# to avoid unnecessarily sending large or sensitive files and directories (i.e., build context) to the daemon (docker server) and potentially adding them to images using ADD or COPY.
+*
+!.env
+!nginx/
+!app/
+!*.yml
+
