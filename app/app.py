@@ -5,24 +5,25 @@ import config
 
 application = Flask(__name__)
 
-#application.config["MONGO_URI"] = os,environ['MONGODB_USERNAME']
-#application.config["MONGO_URI"] = config.MONGO_DB_URL
-#application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] + 
+# application.config["MONGO_URI"] = os,environ['MONGODB_USERNAME']
+# application.config["MONGO_URI"] = config.MONGO_DB_URL
+# application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] +
 #									os.environ['MONGODB_USERNAME'] + ':' + 
 #									os.environ['MONGODB_PASSWORD'] + '@' +
 #									os.environ['MONGODB_HOSTNAME'] + ':27017/' + 
 #									os.environ['MONGODB_DATABASE']
 
-application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] + 
-									os.environ['MONGODB_USER'] + ':' + 
-									os.environ['MONGODB_PWD'] + '@' + 
-									os.environ['MONGODB_DB'] + 
-									os.environ['MONGODB_URI_SUFFIX'] +
-									os.environ['MONGODB_URI_EXTRA_PYTHON_SUFFIX']
-#mongodb+srv://to:<password>@airportdata-lhzto.mongodb.net/test?retryWrites=true&w=majority
+application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] \
+                                  + os.environ['MONGODB_USER'] + ':' \
+                                  + os.environ['MONGODB_PWD'] + '@' \
+                                  + os.environ['MONGODB_DB'] \
+                                  + os.environ['MONGODB_URI_SUFFIX'] \
+                                  + os.environ['MONGODB_URI_EXTRA_PYTHON_SUFFIX']
+# mongodb+srv://to:<password>@airportdata-lhzto.mongodb.net/test?retryWrites=true&w=majority
 
 mongo = PyMongo(application)
 db = mongo.db
+
 
 @application.route('/')
 def index():
@@ -31,8 +32,9 @@ def index():
         message='Welcome to the Dockerized Flask MongoDB app!'
     )
 
-#@application.route('/todo')
-#def todo():
+
+# @application.route('/todo')
+# def todo():
 #    _todos = db.todo.find()
 #
 #    item = {}
@@ -49,26 +51,25 @@ def index():
 #        data=data
 #    )
 
-@app.route(config.SERVER_WORKDIR, methods=['POST'])
+@application.route(os.environ['FLASK_SEARCH'], methods=['POST'])
 def get_airport_details_by_city_name():
-	col = db.airport_collection
+    col = db.airport_collection
 
-	# res = col.find({'City': {'$regex': '/vic/i'}})
-	res = col.find({"City": {
-                "$regex": "ha",
-                "$options": 'i'
-                }
-                }
-                )
+    # res = col.find({'City': {'$regex': '/vic/i'}})
+    res = col.find({"City": {
+        "$regex": "ha",
+        "$options": 'i'
+    }
+    }
+    )
 
-	
-	#list_of_dict = list(res)
+    # list_of_dict = list(res)
 
-	return jasonify(list(res))
-        
-	
-#@application.route('/todo', methods=['POST'])
-#def createTodo():
+    return jsonify(list(res))
+
+
+# @application.route('/todo', methods=['POST'])
+# def createTodo():
 #    data = request.get_json(force=True)
 #    item = {
 #        'todo': data['todo']
@@ -82,5 +83,5 @@ def get_airport_details_by_city_name():
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
-    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 5000)
+    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 8000)
     application.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)

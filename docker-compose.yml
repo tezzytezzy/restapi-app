@@ -12,52 +12,58 @@ services:
       FLASK_ENV: ${FLASK_ENV}
       FLASK_DEBUG: ${FLASK_DEBUG}
       FLASK_PORT: ${FLASK_PORT}
+      FLASK_SEARCH: ${FLASK_SEARCH}
       MONGODB_DB: ${MONGODB_DB}
       MONGODB_USER: ${MONGODB_USER}
       MONGODB_PWD: ${MONGODB_PWD}
       MONGODB_URI_PREFIX: ${MONGODB_URI_PREFIX}
       MONGODB_URI_SUFFIX: ${MONGODB_URI_SUFFIX}
       MONGODB_URI_EXTRA_PYTHON_SUFFIX: ${MONGODB_URI_EXTRA_PYTHON_SUFFIX}
+#      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
+#      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
       #MONGODB_HOSTNAME: mongodb
     volumes:
       - flaskdata:${FLASK_DATA_DIR}
-    depends_on:
-      - mongodb
+#    depends_on:
+#      - mongodb
     networks:
       - frontend
-      - backend
+#      - backend
       
-  mongodb:
-    image: mongo:4.0.8
-    container_name: mongodb
-    restart: unless-stopped
-    #command: curl "mongodb+srv://" + 
-    # 				${MONGODB_USER} + ":" + 
-    #				${MONGODB_PWD} + "@" + 
-    #				${MONGODB_DB} + 
-    #				"-lhzto.mongodb.net/test?retryWrites=true&w=majority"
-    #command: mongod --auth
-    #command: mongo ${MONGODB_URI}
-    #command: mongo ${MONGODB_URI} --username ${MONGODB_USER} --password ${MONGODB_PWD}
-    command: mongo "${MONGODB_URI_PREFIX}${MONGODB_DB}${MONGODB_URI_SUFFIX}" --username ${MONGODB_USER} --password ${MONGODB_PWD}
-    #environment:
-      #MONGO_INITDB_ROOT_USERNAME:
-      #MONGO_INITDB_ROOT_PASSWORD: 
-      #MONGO_INITDB_DATABASE: 
-      #MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
-      #MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
-    volumes:
-      - mongodbdata:${MONGODB_DATA_DIR}
-      - mongodblog:${MONGODB_LOG_DIR}
-    networks:
-      - backend
+#  mongodb:
+#    build:
+#      context: mongodb
+#      dockerfile: Dockerfile
+#    #image: mongo:4.0.8
+#    container_name: mongodb
+#    restart: unless-stopped
+#    #command: curl "mongodb+srv://" +
+#    # 				${MONGODB_USER} + ":" +
+#    #				${MONGODB_PWD} + "@" +
+#    #				${MONGODB_DB} +
+#    #				"-lhzto.mongodb.net/test?retryWrites=true&w=majority"
+#    #command: mongod --auth
+#    #command: mongo ${MONGODB_URI}
+#    #command: mongo ${MONGODB_URI} --username ${MONGODB_USER} --password ${MONGODB_PWD}
+#    #command: mongo "${MONGODB_URI_PREFIX}${MONGODB_DB}${MONGODB_URI_SUFFIX}" --username ${MONGODB_USER} --password ${MONGODB_PWD}
+#    environment:
+#      #MONGO_INITDB_ROOT_USERNAME:
+#      #MONGO_INITDB_ROOT_PASSWORD:
+#      #MONGO_INITDB_DATABASE:
+#      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
+#      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
+#    volumes:
+#      - mongodbdata:${MONGODB_DATA_DIR}
+#      - mongodblog:${MONGODB_LOG_DIR}
+#    networks:
+#      - backend
       
   webserver:
     build:
       context: nginx
       dockerfile: Dockerfile
     #image: digitalocean.com/webserver:latest
-    container_name: webserver
+    container_name: webserver # If not specified, automatically named as #{PWD}_{this service name}
     restart: unless-stopped
     environment:
       APP_ENV: "prod"
@@ -65,10 +71,12 @@ services:
       APP_DEBUG: "false"
       SERVICE_NAME: "webserver"
     ports:
-      - "80:80"
-      - "443:443"
+      - "8080:80"
+#      - "443:443"
     volumes:
       - nginxlog:${NGINX_LOG_DIR}
+#      - web_static:${NGINX_LOG_DIR}
+#      - ./nginx/conf.d:/etc/nginx/conf.d # Source full path name means "bind mount", not volume
     depends_on:
       - flask
     networks:
@@ -77,8 +85,8 @@ services:
 networks:
   frontend:
     driver: bridge
-  backend:
-    driver: bridge
+#  backend:
+#    driver: bridge
 
 
 volumes:
@@ -86,28 +94,35 @@ volumes:
     driver: local
     driver_opts:
       type: none #if "bind", then bind mount
-      device: $PWD/${FLASK_HOST_DATA_DIR} # must be an ABSOLUTE PATH
+      device: $PWD${FLASK_HOST_DATA_DIR} # must be an ABSOLUTE PATH
       o: bind
 
-  mongodbdata:
-    driver: local
-    driver_opts:
-      type: none
-      device: $PWD/${MONGODB_HOST_DATA_DIR} # must be an ABSOLUTE PATH
-      o: bind
+#  mongodbdata:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: $PWD${MONGODB_HOST_DATA_DIR} # must be an ABSOLUTE PATH
+#      o: bind
 
-  mongodblog:
-    driver: local
-    driver_opts:
-      type: none
-      device: $PWD/${MONGODB_HOST_LOG_DIR} # must be an ABSOLUTE PATH
-      o: bind
+#  mongodblog:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: $PWD${MONGODB_HOST_LOG_DIR} # must be an ABSOLUTE PATH
+#      o: bind
+
+#  web_static:
+#    driver: local
+#    driver_opts:
+#      type: none
+#      device: $PWD${NGINX_HOST_LOG_DIR}
+#      o: bind
 
   nginxlog:
     driver: local
     driver_opts:
       type: none
-      device: $PWD/${NGINX_HOST_LOG_DIR} # must be an ABSOLUTE PATH
+      device: $PWD${NGINX_HOST_LOG_DIR} # must be an ABSOLUTE PATH
       o: bind
 
 #volumes:
