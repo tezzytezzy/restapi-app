@@ -1,85 +1,57 @@
 import os
+
+import pymongo
 from flask import Flask, request, jsonify
-from flask_pymongo import PyMongo
-import config
+from bson.json_util import dumps
+
+#  The following can be UNcommented for dev testing on local host (NOT in a Docker container)
+from dotenv import load_dotenv
+from pathlib import Path  # python3 only
+env_path = Path('..') / '.env'
+load_dotenv(dotenv_path=env_path)
 
 application = Flask(__name__)
 
-# application.config["MONGO_URI"] = os,environ['MONGODB_USERNAME']
-# application.config["MONGO_URI"] = config.MONGO_DB_URL
-# application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] +
-#									os.environ['MONGODB_USERNAME'] + ':' + 
-#									os.environ['MONGODB_PASSWORD'] + '@' +
-#									os.environ['MONGODB_HOSTNAME'] + ':27017/' + 
-#									os.environ['MONGODB_DATABASE']
-
-application.config["MONGO_URI"] = os.environ['MONGODB_URI_PREFIX'] \
-                                  + os.environ['MONGODB_USER'] + ':' \
-                                  + os.environ['MONGODB_PWD'] + '@' \
-                                  + os.environ['MONGODB_DB'] \
-                                  + os.environ['MONGODB_URI_SUFFIX'] \
-                                  + os.environ['MONGODB_URI_EXTRA_PYTHON_SUFFIX']
-# mongodb+srv://to:<password>@airportdata-lhzto.mongodb.net/test?retryWrites=true&w=majority
-
-mongo = PyMongo(application)
-db = mongo.db
+client = pymongo.MongoClient(os.environ['MONGODB_URI_PREFIX']
+                             + os.environ['MONGODB_USER'] + ':'
+                             + os.environ['MONGODB_PWD'] + '@'
+                             + os.environ['MONGODB_CLUSTER']
+                             + os.environ['MONGODB_URI_SUFFIX']
+                             + os.environ['MONGODB_URI_EXTRA_PYTHON_SUFFIX'])
 
 
 @application.route('/')
-def index():
+def home():
     return jsonify(
         status=True,
-        message='Welcome to the Dockerized Flask MongoDB app!'
+        message='Welcome to the Dockerized Flask app!'
     )
 
 
-# @application.route('/todo')
-# def todo():
-#    _todos = db.todo.find()
-#
-#    item = {}
-#    data = []
-#    for todo in _todos:
-#        item = {
-#            'id': str(todo['_id']),
-#            'todo': todo['todo']
-#        }
-#        data.append(item)
-#
-#    return jsonify(
-#        status=True,
-#        data=data
-#    )
+# `curl -H "Content-type: application/json" -X POST http://0.0.0.0:8000/city_search -d '{"City":"vic"}'`
+# http://0.0.0.0:8000/city_search?vic
+@application.route(os.environ['FLASK_SEARCH'], methods=['GET'])
+def city_search():
+    db = client[os.environ['MONGODB_DB']]
+    collection = db[os.environ['MONGODB_COLLECTION']]
 
-@application.route(os.environ['FLASK_SEARCH'], methods=['POST'])
-def get_airport_details_by_city_name():
-    col = db.airport_collection
+    city_name = request.json
 
-    # res = col.find({'City': {'$regex': '/vic/i'}})
-    res = col.find({"City": {
-        "$regex": "ha",
+    # Use regex with -i (ignore case)
+    res = collection.find({"City": {
+        "$regex": city_name['City'],
         "$options": 'i'
     }
     }
     )
 
-    # list_of_dict = list(res)
+    # None of the followings works: "not JSON serializable"
+    # return json.dumps(res)
+    # return bsonjs.dumps(res)
+    # return jsonify(bsonjs.dumps(res))
+    # return jsonify(results=list(res))
+    return dumps(res)
 
-    return jsonify(list(res))
-
-
-# @application.route('/todo', methods=['POST'])
-# def createTodo():
-#    data = request.get_json(force=True)
-#    item = {
-#        'todo': data['todo']
-#    }
-#    db.todo.insert_one(item)
-#
-#    return jsonify(
-#        status=True,
-#        message='To-do saved successfully!'
-#    ), 201
 
 if __name__ == "__main__":
     ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)

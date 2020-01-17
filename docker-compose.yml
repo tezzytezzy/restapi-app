@@ -13,17 +13,26 @@ services:
       FLASK_DEBUG: ${FLASK_DEBUG}
       FLASK_PORT: ${FLASK_PORT}
       FLASK_SEARCH: ${FLASK_SEARCH}
-      MONGODB_DB: ${MONGODB_DB}
       MONGODB_USER: ${MONGODB_USER}
       MONGODB_PWD: ${MONGODB_PWD}
+      MONGODB_CLUSTER: ${MONGODB_CLUSTER}
+      MONGODB_DB: ${MONGODB_DB}
+      MONGODB_COLLECTION: ${MONGODB_COLLECTION}
       MONGODB_URI_PREFIX: ${MONGODB_URI_PREFIX}
       MONGODB_URI_SUFFIX: ${MONGODB_URI_SUFFIX}
       MONGODB_URI_EXTRA_PYTHON_SUFFIX: ${MONGODB_URI_EXTRA_PYTHON_SUFFIX}
+      #WARNING: The MONGODB_URI_EXTRA_PYTHON_SUFFIX variable is not set. Defaulting to a blank string.
+
 #      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
 #      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
       #MONGODB_HOSTNAME: mongodb
     volumes:
       - flaskdata:${FLASK_DATA_DIR}
+      - ./app:/var/www #  for remote debugging purpose IN the container
+#      - type: bind
+#        source: .
+#        target: /opt/app/flask
+
 #    depends_on:
 #      - mongodb
     networks:
@@ -71,10 +80,11 @@ services:
       APP_DEBUG: "false"
       SERVICE_NAME: "webserver"
     ports:
-      - "8080:80"
-#      - "443:443"
+      - "80:80" # CHANGE CONTAINER PORT NUMBER LATER -> ${HOST_PORT_1}:80
+      - "443:443" # CHANGE CONTAINER PORT NUMBER LATER -> {HOST_PORT_2}:443
     volumes:
       - nginxlog:${NGINX_LOG_DIR}
+
 #      - web_static:${NGINX_LOG_DIR}
 #      - ./nginx/conf.d:/etc/nginx/conf.d # Source full path name means "bind mount", not volume
     depends_on:
