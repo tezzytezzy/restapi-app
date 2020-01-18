@@ -1,5 +1,5 @@
 ## Objective
-Create a scalable REST API database lookup serivce of all the Canadian airports (348), which allows data consumer to inquire by either full or partial city name (case-INsensitive).
+Create a scalable REST API database lookup serivce of all the Canadian airports (348), which allows data consumer to inquire by either full or partial city name (case-INsensitive) to receive JSON-formated result.
 
 Each airport carries four (4) element of attributes:
 1. City - Name of the city where an airport is located
