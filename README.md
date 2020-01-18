@@ -22,7 +22,7 @@ DIAGRAM
 Example 1 (full city name of '**victoria**'):
 
 ``` bash
-(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"victoria"}' | python -mjson.tool
+(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"victoria"}' | python -m json.tool
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
 100   271  100   252  100    19   8934    673 --:--:-- --:--:-- --:--:--  9000
@@ -48,30 +48,48 @@ Example 1 (full city name of '**victoria**'):
 ]
 ```
 
-Example 2 (partial city name of '**com**'):
+Example 2 (partial city name of '**ter**'):
 ``` bash
-(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"com"}' | python -mjson.tool
+(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"ter"}' | python -m json.tool
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100   266  100   252  100    14   9335    518 --:--:-- --:--:-- --:--:--  9692
+100   534  100   520  100    14  17113    460 --:--:-- --:--:-- --:--:-- 17333
 [
     {
         "_id": {
-            "$oid": "5dedd3ae8b72b91c057fd42b"
+            "$oid": "5dedd3ae8b72b91c057fd44e"
         },
-        "City": "Baie Comeau",
-        "Province": "QC",
-        "IATA_code": "YBC",
+        "City": "Chesterfield Inlet",
+        "Province": "NU",
+        "IATA_code": "YCS",
         "Rail_service": "N"
     },
     {
         "_id": {
-            "$oid": "5dedd3ae8b72b91c057fd458"
+            "$oid": "5dedd3ae8b72b91c057fd54c"
         },
-        "City": "Comox",
+        "City": "Terrace",
         "Province": "BC",
-        "IATA_code": "YQQ",
+        "IATA_code": "YXT",
         "Rail_service": "N"
+    },
+    {
+        "_id": {
+            "$oid": "5dedd3ae8b72b91c057fd4c5"
+        },
+        "City": "Lloydminister",
+        "Province": "AB",
+        "IATA_code": "YLL",
+        "Rail_service": "N"
+    },
+    {
+        "_id": {
+            "$oid": "5dedd3ae8b72b91c057fd533"
+        },
+        "City": "Senneterre",
+        "Province": "QC",
+        "IATA_code": "XFK",
+        "Rail_service": "Y"
     }
 ]
 ```
