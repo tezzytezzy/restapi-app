@@ -1,3 +1,7 @@
-/log/
-/data/
-/.idea/
+log/
+.idea/
+app/__pycache__/
+
+
+# Comment in for production
+#.env

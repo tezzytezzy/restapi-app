@@ -8,12 +8,13 @@ ENV GROUP_ID=1000 \
 WORKDIR /var/www/
 
 COPY . /var/www/
-RUN pip install --upgrade pip
-RUN pip install -r requirements.txt
-RUN pip install gunicorn
+RUN pip install --upgrade pip \
+    && pip install -r requirements.txt \
+    && pip install gunicorn \
+    && addgroup -g $GROUP_ID www \
+    && adduser -D -u $USER_ID -G www www -s /bin/sh \
+    && ln -sf /dev/stderr ${FLASK_LOG_DIR} # ${FLASK_LOG_DIR} must exist prior to execution unlike WORKDIR
 
-RUN addgroup -g $GROUP_ID www
-RUN adduser -D -u $USER_ID -G www www -s /bin/sh
 
 USER www
 

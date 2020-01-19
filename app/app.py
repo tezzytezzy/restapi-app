@@ -4,11 +4,19 @@ import pymongo
 from flask import Flask, request, jsonify
 from bson.json_util import dumps
 
-#  The following can be UNcommented for dev testing on local host (NOT in a Docker container)
-from dotenv import load_dotenv
-from pathlib import Path  # python3 only
-env_path = Path('..') / '.env'
-load_dotenv(dotenv_path=env_path)
+# #  The following can be UNcommented for dev testing on local host (NOT in a Docker container)
+# from dotenv import load_dotenv
+# from pathlib import Path  # python3 only
+# env_path = Path('..') / '.env'
+# load_dotenv(dotenv_path=env_path)
+
+# CLIENT ACCESS
+# 1. Local Host
+# curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"ter"}'
+#
+# 2. Docker container
+# curl -H "Content-type: application/json" -X GET http://127.0.0.1/city_search -d '{"City":"ter"}'
+
 
 application = Flask(__name__)
 
@@ -28,8 +36,6 @@ def home():
     )
 
 
-# `curl -H "Content-type: application/json" -X POST http://0.0.0.0:8000/city_search -d '{"City":"vic"}'`
-# http://0.0.0.0:8000/city_search?vic
 @application.route(os.environ['FLASK_SEARCH'], methods=['GET'])
 def city_search():
     db = client[os.environ['MONGODB_DB']]
