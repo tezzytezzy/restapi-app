@@ -22,10 +22,10 @@ DIAGRAM
 Example 1 (full city name of '**victoria**'):
 
 ``` bash
-(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"victoria"}' | python -m json.tool
+base) to@mx:~/gits/restapi-app$ curl -H "Content-type: application/json" -X GET http://127.0.0.1/city_search -d '{"City":"victoria"}' | python -m json.tool
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100   271  100   252  100    19   8934    673 --:--:-- --:--:-- --:--:--  9000
+100   271  100   252  100    19   1184     89 --:--:-- --:--:-- --:--:--  1188
 [
     {
         "_id": {
@@ -50,10 +50,10 @@ Example 1 (full city name of '**victoria**'):
 
 Example 2 (partial city name of '**ter**'):
 ``` bash
-(base) to@mx:~$ curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"ter"}' | python -m json.tool
+(base) to@mx:~/gits/restapi-app$ curl -H "Content-type: application/json" -X GET http://127.0.0.1/city_search -d '{"City":"ter"}' | python -m json.tool
   % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
                                  Dload  Upload   Total   Spent    Left  Speed
-100   534  100   520  100    14  17113    460 --:--:-- --:--:-- --:--:-- 17333
+100   534  100   520  100    14   2498     67 --:--:-- --:--:-- --:--:--  2512
 [
     {
         "_id": {
