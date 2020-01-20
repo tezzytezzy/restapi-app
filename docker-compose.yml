@@ -12,6 +12,7 @@ services:
       FLASK_DEBUG: ${FLASK_DEBUG}
       FLASK_PORT: ${FLASK_PORT}
       FLASK_SEARCH: ${FLASK_SEARCH}
+      FLASK_REMOTE_ROOT_DIR: ${FLASK_REMOTE_ROOT_DIR}
       MONGODB_USER: ${MONGODB_USER}
       MONGODB_PWD: ${MONGODB_PWD}
       MONGODB_CLUSTER: ${MONGODB_CLUSTER}
@@ -25,57 +26,28 @@ services:
 #      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
       #MONGODB_HOSTNAME: mongodb
     volumes:
-      - ./app:/var/www #  for remote debugging purpose IN the container
+      - ./app:${FLASK_REMOTE_ROOT_DIR} #  for remote debugging purpose IN the container
       - flaskdata:${FLASK_LOG_DIR}
 #      - ${MONGODB_HOST_DATA_DIR}:${MONGODB_DATA_DIR}
 #      - ${FLASK_HOST_LOG_DIR}:${FLASK_DATA_DIR}
     networks:
       - frontend
 #      - backend
-      
-#  mongodb:
-#    build:
-#      context: mongodb
-#      dockerfile: Dockerfile
-#    #image: mongo:4.0.8
-#    container_name: mongodb
-#    restart: unless-stopped
-#    #command: curl "mongodb+srv://" +
-#    # 				${MONGODB_USER} + ":" +
-#    #				${MONGODB_PWD} + "@" +
-#    #				${MONGODB_DB} +
-#    #				"-lhzto.mongodb.net/test?retryWrites=true&w=majority"
-#    #command: mongod --auth
-#    #command: mongo ${MONGODB_URI}
-#    #command: mongo ${MONGODB_URI} --username ${MONGODB_USER} --password ${MONGODB_PWD}
-#    #command: mongo "${MONGODB_URI_PREFIX}${MONGODB_DB}${MONGODB_URI_SUFFIX}" --username ${MONGODB_USER} --password ${MONGODB_PWD}
-#    environment:
-#      #MONGO_INITDB_ROOT_USERNAME:
-#      #MONGO_INITDB_ROOT_PASSWORD:
-#      #MONGO_INITDB_DATABASE:
-#      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
-#      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
-#    volumes:
-#      - mongodbdata:${MONGODB_DATA_DIR}
-#      - mongodblog:${MONGODB_LOG_DIR}
-#    networks:
-#      - backend
-      
+
   webserver:
     build:
       context: nginx
       dockerfile: Dockerfile
-    #image: digitalocean.com/webserver:latest
     container_name: webserver # If not specified, automatically named as #{PWD}_{this service name}
     restart: unless-stopped
-    environment:
-      APP_ENV: "prod"
-      APP_NAME: "webserver"
-      APP_DEBUG: "false"
-      SERVICE_NAME: "webserver"
+#   environment:
+#      APP_ENV: "prod"
+#      APP_NAME: "webserver"
+#      APP_DEBUG: "false"
+#      SERVICE_NAME: "webserver"
     ports:
-      - "80:80" # CHANGE CONTAINER PORT NUMBER LATER -> ${HOST_PORT_1}:80
-      - "443:443" # CHANGE CONTAINER PORT NUMBER LATER -> {HOST_PORT_2}:443
+      - ${HOST_NGINX__PORT_1}:80 # CHANGE CONTAINER PORT NUMBER LATER -> ${HOST_NGINX__PORT_1}:80
+      - ${HOST_NGINX__PORT_2}:443 # CHANGE CONTAINER PORT NUMBER LATER -> {HOST_NGINX__PORT_2}:443
     volumes:
       - nginxlog:${NGINX_LOG_DIR}
 
@@ -107,11 +79,3 @@ volumes:
       type: none
       device: $PWD${NGINX_HOST_LOG_DIR} # must be an ABSOLUTE PATH
       o: bind
-
-#volumes:
-#  mongodbdata:
-#    driver: local
-#  appdata:
-#    driver: local
-#  nginxdata:
-#    driver: local

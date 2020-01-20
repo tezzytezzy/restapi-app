@@ -11,12 +11,12 @@ from bson.json_util import dumps
 # load_dotenv(dotenv_path=env_path)
 
 # CLIENT ACCESS
-# 1. Local Host
-# curl -H "Content-type: application/json" -X GET http://0.0.0.0:8000/city_search -d '{"City":"ter"}'
-#
-# 2. Docker container
+# For Dockerized container
+# curl -H "Content-type: application/json" -X GET http://0.0.0.0/city_search -d '{"City":"ter"}'
+#  or
 # curl -H "Content-type: application/json" -X GET http://127.0.0.1/city_search -d '{"City":"ter"}'
-
+#
+# N.B. As for testing on local host, add port number :8000 to URL
 
 application = Flask(__name__)
 
@@ -60,6 +60,6 @@ def city_search():
 
 
 if __name__ == "__main__":
-    ENVIRONMENT_DEBUG = os.environ.get("APP_DEBUG", True)
-    ENVIRONMENT_PORT = os.environ.get("APP_PORT", 8000)
+    ENVIRONMENT_DEBUG = os.environ.get("FLASK_DEBUG", True)
+    ENVIRONMENT_PORT = os.environ.get("FLASK_PORT", 8000)
     application.run(host='0.0.0.0', port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)

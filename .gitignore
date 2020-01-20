@@ -1,6 +1,6 @@
 log/
 .idea/
-app/__pycache__/
+__pycache__/
 
 
 # Comment in for production
