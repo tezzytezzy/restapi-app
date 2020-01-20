@@ -5,6 +5,19 @@ services:
     build:
       context: app
       dockerfile: Dockerfile
+
+      # Note: If your service specifies a build option, variables defined in environment files are not automatically visible
+      #  during the build. Use the args sub-option of build to define build-time environment variables.
+      # Environment variables traverse through docker-compose.yml via .env file, then through "build: args" as build-time only
+      #  environment variables and then assigned into ARG in Dockerfile and finally used as ${var_name} in the Dockerfile
+      args:
+        - MAINTAINER_NAME=${MAINTAINER_NAME}
+        - FLASK_USER=${FLASK_USER}
+        - FLASK_ID=${FLASK_ID}
+        - FLASK_PORT=${FLASK_PORT}
+        - FLASK_DEFAULT_IP_ADDRESS=${FLASK_DEFAULT_IP_ADDRESS}
+        - FLASK_REMOTE_ROOT_DIR=${FLASK_REMOTE_ROOT_DIR}
+        - FLASK_LOG_DIR=${FLASK_LOG_DIR}
     container_name: flask
     restart: unless-stopped
     environment:
@@ -12,7 +25,8 @@ services:
       FLASK_DEBUG: ${FLASK_DEBUG}
       FLASK_PORT: ${FLASK_PORT}
       FLASK_SEARCH: ${FLASK_SEARCH}
-      FLASK_REMOTE_ROOT_DIR: ${FLASK_REMOTE_ROOT_DIR}
+      FLASK_DEFAULT_IP_ADDRESS: ${FLASK_DEFAULT_IP_ADDRESS}
+#      FLASK_REMOTE_ROOT_DIR: ${FLASK_REMOTE_ROOT_DIR}
       MONGODB_USER: ${MONGODB_USER}
       MONGODB_PWD: ${MONGODB_PWD}
       MONGODB_CLUSTER: ${MONGODB_CLUSTER}
@@ -38,6 +52,8 @@ services:
     build:
       context: nginx
       dockerfile: Dockerfile
+      args:
+        - MAINTAINER_NAME=${MAINTAINER_NAME}
     container_name: webserver # If not specified, automatically named as #{PWD}_{this service name}
     restart: unless-stopped
 #   environment:

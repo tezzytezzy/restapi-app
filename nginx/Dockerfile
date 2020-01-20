@@ -1,5 +1,6 @@
 FROM nginx:1.17-alpine
-LABEL MAINTAINER="Tezzy O."
+ARG MAINTAINER_NAME
+LABEL MAINTAINER=${MAINTAINER_NAME}
 
 # RUN rm /etc/nginx/nginx.conf
 COPY ./conf.d/app.conf /etc/nginx/conf.d/app.conf

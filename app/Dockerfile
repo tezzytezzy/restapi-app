@@ -1,25 +1,30 @@
 FROM python:3.6.8-alpine3.9
+# ARG must be BELOW FROM!
+ARG FLASK_REMOTE_ROOT_DIR
+ARG FLASK_LOG_DIR
+ARG FLASK_USER
+ARG FLASK_ID
+ARG FLASK_DEFAULT_IP_ADDRESS
+ARG MAINTAINER_NAME
+LABEL MAINTAINER=${MAINTAINER_NAME}
+# <- PARAMETISE LABEL!
 
-LABEL MAINTAINER="Tezzy O."
+#ENV GROUP_ID=${FLASK_ID} \
+#    USER_ID=${FLASK_ID}
 
-ENV GROUP_ID=1000 \
-    USER_ID=1000 \
-    FLASK_ROOT_DIR=${FLASK_REMOTE_ROOT_DIR} \
-    FLASK_LOG_DIR=${FLASK_LOG_DIR}
+WORKDIR ${FLASK_REMOTE_ROOT_DIR}
 
-WORKDIR /var/www
-
-COPY . /var/www
+COPY . ${FLASK_REMOTE_ROOT_DIR}
 RUN pip install --upgrade pip \
     && pip install -r requirements.txt \
     && pip install gunicorn \
-    && addgroup -g $GROUP_ID www \
-    && adduser -D -u $USER_ID -G www www -s /bin/sh \
-    && ln -sf /dev/stderr /var/log # ${FLASK_LOG_DIR} must exist prior to execution unlike WORKDIR
+    && addgroup -g ${FLASK_ID} ${FLASK_USER} \
+    && adduser -D -u ${FLASK_ID} -G ${FLASK_USER} ${FLASK_USER} -s /bin/sh \
+    && ln -sf /dev/stderr ${FLASK_LOG_DIR} # ${FLASK_LOG_DIR} must exist prior to execution unlike WORKDIR
 
 
-USER www
+USER ${FLASK_USER}
 
 #EXPOSE 8000
 
-CMD [ "gunicorn", "-w", "4", "--bind", "0.0.0.0:8000", "wsgi"]
+CMD [ "gunicorn", "-w", "4", "--bind", '${FLASK_DEFAULT_IP_ADDRESS}:${FLASK_PORT}', "wsgi"]
