@@ -26,7 +26,7 @@ services:
       FLASK_PORT: ${FLASK_PORT}
       FLASK_SEARCH: ${FLASK_SEARCH}
       FLASK_DEFAULT_IP_ADDRESS: ${FLASK_DEFAULT_IP_ADDRESS}
-#      FLASK_REMOTE_ROOT_DIR: ${FLASK_REMOTE_ROOT_DIR}
+      FLASK_DEFAULT_IP_ADDRESS_AND_PORT: ${FLASK_DEFAULT_IP_ADDRESS_AND_PORT}
       MONGODB_USER: ${MONGODB_USER}
       MONGODB_PWD: ${MONGODB_PWD}
       MONGODB_CLUSTER: ${MONGODB_CLUSTER}
@@ -35,18 +35,13 @@ services:
       MONGODB_URI_PREFIX: ${MONGODB_URI_PREFIX}
       MONGODB_URI_SUFFIX: ${MONGODB_URI_SUFFIX}
       MONGODB_URI_EXTRA_PYTHON_SUFFIX: ${MONGODB_URI_EXTRA_PYTHON_SUFFIX}
-
 #      MONGODB_DATA_DIR: ${MONGODB_DATA_DIR}
 #      MONGODB_LOG_DIR: ${MONGODB_LOG_DIR}
-      #MONGODB_HOSTNAME: mongodb
     volumes:
       - ./app:${FLASK_REMOTE_ROOT_DIR} #  for remote debugging purpose IN the container
       - flaskdata:${FLASK_LOG_DIR}
-#      - ${MONGODB_HOST_DATA_DIR}:${MONGODB_DATA_DIR}
-#      - ${FLASK_HOST_LOG_DIR}:${FLASK_DATA_DIR}
     networks:
       - frontend
-#      - backend
 
   webserver:
     build:
@@ -56,19 +51,11 @@ services:
         - MAINTAINER_NAME=${MAINTAINER_NAME}
     container_name: webserver # If not specified, automatically named as #{PWD}_{this service name}
     restart: unless-stopped
-#   environment:
-#      APP_ENV: "prod"
-#      APP_NAME: "webserver"
-#      APP_DEBUG: "false"
-#      SERVICE_NAME: "webserver"
     ports:
-      - ${HOST_NGINX__PORT_1}:80 # CHANGE CONTAINER PORT NUMBER LATER -> ${HOST_NGINX__PORT_1}:80
-      - ${HOST_NGINX__PORT_2}:443 # CHANGE CONTAINER PORT NUMBER LATER -> {HOST_NGINX__PORT_2}:443
+      - ${HOST_NGINX__PORT_1}:80
+      - ${HOST_NGINX__PORT_2}:443
     volumes:
       - nginxlog:${NGINX_LOG_DIR}
-
-#      - web_static:${NGINX_LOG_DIR}
-#      - ./nginx/conf.d:/etc/nginx/conf.d # Source full path name means "bind mount", not volume
     depends_on:
       - flask
     networks:
@@ -77,9 +64,6 @@ services:
 networks:
   frontend:
     driver: bridge
-#  backend:
-#    driver: bridge
-
 
 volumes:
   flaskdata:

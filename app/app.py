@@ -60,7 +60,6 @@ def city_search():
 
 
 if __name__ == "__main__":
-    ENVIRONMENT_IP_ADDRESS = os.environ.get("FLASK_DEFAULT_IP_ADDRESS", "0.0.0.0")
-    ENVIRONMENT_DEBUG = os.environ.get("FLASK_DEBUG", True)
-    ENVIRONMENT_PORT = os.environ.get("FLASK_PORT", 8000)
-    application.run(host=ENVIRONMENT_IP_ADDRESS, port=ENVIRONMENT_PORT, debug=ENVIRONMENT_DEBUG)
+    application.run(host=os.environ['FLASK_DEFAULT_IP_ADDRESS'],
+                    port=os.environ['FLASK_PORT'],
+                    debug=os.environ['FLASK_DEBUG'])
