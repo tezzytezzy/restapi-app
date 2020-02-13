@@ -15,8 +15,8 @@ Docker containers with the followings in the MVC architecture:
 [Flask](https://palletsprojects.com/p/flask/) - Application Server  
 [MongoDB Atlas](https://www.mongodb.com/cloud/atlas) - No SQL database hosted on AWS
 
-DIAGRAM
-
+![](image.png)
+(Source [Abhishek Saurabh](https://medium.com/@abhisheksaurabh1985/face-detection-rest-api-in-production-using-docker-nginx-and-flask-1f205633d2d6))
 
 ## Use Case
 Example 1 (full city name of '**victoria**'):
